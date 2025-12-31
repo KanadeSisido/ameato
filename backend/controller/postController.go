@@ -1,0 +1,60 @@
+package controller
+
+import (
+	"ameato/model"
+	"ameato/repository"
+	"context"
+	"errors"
+)
+
+type PostControllerInterface interface {
+	PostMessages(ctx context.Context, message model.CreateMessage) error
+}
+
+type PostController struct {
+	createMessageRepository repository.CreateMessageRepositoryInterface
+}
+
+func NewPostController(createMessageRepository repository.CreateMessageRepositoryInterface) *PostController {
+	return &PostController{
+		createMessageRepository: createMessageRepository,
+	}
+}
+
+
+func (c *PostController) PostMessages(ctx context.Context, message model.CreateMessage) error {
+
+	x := message.Position.X
+	y := message.Position.Y
+
+	if len(message.Content) == 0 || len(message.Content) > 30 {
+		return errors.New("invalid Message Length")
+	}
+
+	if !isInRange(x, 0, 1) || !isInRange(y, 0, 1) {
+		return errors.New("invalid Position Range")
+	}
+
+	if err := c.createMessageRepository.CreateMessage(ctx, message); err != nil {
+		return errors.New("internal Server Error")
+	}
+	
+	return nil
+
+}
+
+// 値が範囲内にある場合true, そうでない場合falseを返す関数
+func isInRange(value float64, lowerLimit float64, upperLimit float64) bool {
+
+	if lowerLimit > upperLimit {
+		return false
+	}
+
+	if value > upperLimit {
+		return false
+	} else if value < lowerLimit {
+		return false
+	}
+
+	return true
+}

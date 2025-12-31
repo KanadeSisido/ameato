@@ -2,6 +2,7 @@ package router
 
 import (
 	"ameato/handler"
+	"ameato/middleware"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -12,10 +13,13 @@ func NewRouter(
 	_postHandler handler.PostHandlerInterface,
 ) *gin.Engine {
 
+	gin.SetMode(gin.ReleaseMode)
 
-	router := gin.Default()
+	router := gin.New()
 	binding.EnableDecoderDisallowUnknownFields = true
 	
+	router.Use(middleware.CorsMiddleware())
+
 	router.GET("/health", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
 			"status": "ok",

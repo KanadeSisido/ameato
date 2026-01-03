@@ -20,6 +20,13 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='jp' className='scrollbar-hidden'>
+			<head>
+				<meta name='referrer' content='strict-origin-when-cross-origin' />
+				{/* <meta
+					http-equiv='Content-Security-Policy'
+					content={`default-src 'self'; connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL};`}
+				/> */}
+			</head>
 			<body className='antialiased'>{children}</body>
 		</html>
 	);

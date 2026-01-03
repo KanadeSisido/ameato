@@ -1,0 +1,114 @@
+components:
+  schemas:
+    model.CreateMessage:
+      properties:
+        content:
+          type: string
+        position:
+          $ref: '#/components/schemas/model.Position'
+      required:
+      - content
+      - position
+      type: object
+    model.CreatedResponse:
+      properties:
+        status:
+          type: string
+      type: object
+    model.ErrorResponse:
+      properties:
+        error:
+          type: string
+      type: object
+    model.MessageResponse:
+      properties:
+        content:
+          type: string
+        opacity:
+          type: number
+        position:
+          $ref: '#/components/schemas/model.Position'
+      required:
+      - content
+      - opacity
+      - position
+      type: object
+    model.MessagesResponse:
+      properties:
+        messages:
+          items:
+            $ref: '#/components/schemas/model.MessageResponse'
+          type: array
+          uniqueItems: false
+      required:
+      - messages
+      type: object
+    model.Position:
+      properties:
+        x:
+          type: number
+        "y":
+          type: number
+      required:
+      - x
+      - "y"
+      type: object
+externalDocs:
+  description: ""
+  url: ""
+info:
+  description: This is the API documentation for the ame:ato application.
+  title: ame:ato API
+  version: "1.0"
+openapi: 3.1.0
+paths:
+  /api/messages:
+    get:
+      description: 表示可能なメッセージを取得します。
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/model.MessagesResponse'
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/model.ErrorResponse'
+          description: Internal Server Error
+      summary: 表示可能なメッセージを取得する
+      tags:
+      - messages
+    post:
+      description: メッセージを投稿します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/model.CreateMessage'
+        description: Message to create
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/model.CreatedResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/model.ErrorResponse'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/model.ErrorResponse'
+          description: Internal Server Error
+      summary: メッセージを投稿する
+      tags:
+      - messages

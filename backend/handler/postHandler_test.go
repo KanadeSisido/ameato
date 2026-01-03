@@ -43,7 +43,7 @@ func TestPostHandler(t *testing.T) {
 				},
 			},
 			mockCtl: nil,
-			expectCode: 200,
+			expectCode: 201,
 			expectReturn: gin.H{
 				"status": "Message posted successfully",
 			},

@@ -2,19 +2,21 @@
 import { Transition } from "@headlessui/react";
 import React from "react";
 import { motion } from "motion/react";
-import Image from "next/image";
 import { position, messages, createMessage } from "./types/type";
 import { useCreateMessage, useMessages } from "./hooks/useMessage";
-import { mutate } from "swr";
 import { JosefinSans, MPLUSRounded1c } from "./fonts/font";
 import Link from "next/link";
+import { useKeyShortcuts } from "./hooks/useKeyShortcuts";
+import { RefreshTitle } from "./components/refreshTitle";
+import { MaskSVG } from "./components/maskSVG";
+import { useAutoClose } from "./hooks/useAutoClose";
+import { useUnclickedWhile } from "./hooks/useTips";
 
 export default function Home() {
 	const [inputPos, setInputPos] = React.useState<position>({ x: 0, y: 0 });
 	const [isOpen, setIsOpen] = React.useState(false);
 	const [inputText, setInputText] = React.useState("");
 	const [dialogMessage, setDialogMessage] = React.useState("");
-	const [dialogOpen, setDialogOpen] = React.useState(false);
 	const [previousIsError, setPreviousIsError] = React.useState<boolean>(false);
 	const [additionalMessages, setAdditionalMessages] = React.useState<
 		messages["messages"]
@@ -23,35 +25,25 @@ export default function Home() {
 		messages["messages"]
 	>([]);
 	const [openTips, setOpenTips] = React.useState(false);
-	const [clicked, setClicked] = React.useState(false);
 
-	// Escキーショートカット
-	React.useEffect(() => {
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === "Escape") {
-				setIsOpen(false);
-			} else if (e.key === "Enter" && e.ctrlKey) {
-				if (isOpen) {
-					handleSubmit();
-				}
-			}
-		};
-		if (typeof window !== "undefined") {
-			document.addEventListener("keydown", handleKeyDown);
-		}
-		return () => {
-			document.removeEventListener("keydown", handleKeyDown);
-		};
-	}, [isOpen, inputText, inputPos]);
+	// 自動で閉じるダイアログ
+	const [dialogOpen, setDialogOpen] = useAutoClose(4000);
 
-	// メッセージ取得時にAdditionalMessagesをクリア
-	const additionalMsgClearer = (_: messages) => {
-		setAdditionalMessages([]);
-	};
+	// キーショートカット
+	useKeyShortcuts(
+		isOpen,
+		() => setIsOpen(false),
+		() => handleSubmit()
+	);
 
+	// メッセージ取得
 	let { messages, isLoading, isError } = useMessages({
-		onSuccess: additionalMsgClearer,
+		onSuccess: () => setAdditionalMessages([]),
 	});
+
+	useUnclickedWhile(() => {
+		setOpenTips(true);
+	}, 6000);
 
 	// オンライン・オフライン検知
 	React.useEffect(() => {
@@ -88,35 +80,6 @@ export default function Home() {
 		}
 	}, [isError]);
 
-	// ダイアログを自動で閉じる
-	React.useEffect(() => {
-		// early returnすれば無限ループを回避できる
-		if (!dialogOpen) return;
-
-		const timer = setTimeout(() => {
-			setDialogOpen(false);
-		}, 4000);
-		return () => clearTimeout(timer);
-	}, [dialogOpen]);
-
-	React.useEffect(() => {
-		const clickListener = () => {
-			setClicked(true);
-		};
-
-		document.addEventListener("click", clickListener);
-
-		const timer = setTimeout(() => {
-			if (!clicked) {
-				setOpenTips(true);
-			}
-		}, 6000);
-
-		return () => {
-			clearTimeout(timer);
-			document.removeEventListener("click", clickListener);
-		};
-	}, [clicked]);
 	// クリックした位置に入力フォームを表示
 	const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
 		setIsOpen(true);
@@ -366,125 +329,20 @@ export default function Home() {
 				leaveTo='opacity-0'
 			>
 				<motion.p
-					initial={{ y: -50 }}
+					initial={{ y: -40 }}
 					animate={{ y: 0 }}
 					transition={{ duration: 0.2, ease: "easeOut", delay: 1.0 }}
 					className={
-						"fixed top-2 right-3 text-white drop-shadow-md drop-shadow-white/30 cursor-pointer " +
+						"fixed bottom-3 right-2 md:top-2 text-right max-w-1/2 text-white drop-shadow-md drop-shadow-white/30 cursor-pointer " +
 						MPLUSRounded1c.className
 					}
 					onClick={() => {
 						setOpenTips(false);
 					}}
 				>
-					Tips: メッセージを描くには画面をクリックしてください
+					メッセージを描くには画面をタップしてください
 				</motion.p>
 			</Transition>
 		</div>
 	);
 }
-
-// ローディング表示コンポーネント + オフライン表示
-const RefreshTitle: React.FC<{ isLoading: boolean; offline: boolean }> = ({
-	isLoading,
-	offline,
-}) => {
-	const [guard, setGuard] = React.useState(false);
-
-	const handleClick = () => {
-		// 連打対策
-		if (guard || isLoading) return;
-		setGuard(true);
-		setTimeout(() => setGuard(false), 4000);
-
-		mutate(`${process.env.NEXT_PUBLIC_API_URL}/api/messages`);
-	};
-
-	return (
-		<>
-			<div className='fixed top-3 left-2 '>
-				<Image
-					onClick={handleClick}
-					src='ameato.svg'
-					alt='ame:ato'
-					width={200}
-					height={50}
-					className='cursor-pointer select-none hover:opacity-70'
-				/>
-
-				{offline && (
-					<p className={"text-blue-200 mt-2 " + JosefinSans.className}>
-						OFFLINE
-					</p>
-				)}
-			</div>
-			<Transition
-				enter='transition-opacity duration-500'
-				enterFrom='opacity-0'
-				enterTo='opacity-100'
-				leave='transition-opacity duration-500'
-				leaveFrom='opacity-100'
-				leaveTo='opacity-0'
-				afterLeave={() => {}}
-				show={isLoading || guard}
-			>
-				<motion.p
-					initial={{ y: 50, scale: 0.4 }}
-					animate={{ y: 0, scale: 1 }}
-					transition={{ duration: 0.2, ease: "easeOut" }}
-					className={
-						"fixed bottom-3 right-1/2 translate-x-1/2 text-white rounded-full backdrop-blur-2xl bg-white/20 px-6 py-4 text-md " +
-						JosefinSans.className
-					}
-				>
-					Loading...
-				</motion.p>
-			</Transition>
-		</>
-	);
-};
-
-// SVGマスクコンポーネント
-const MaskSVG: React.FC<{
-	messages: messages["messages"];
-}> = ({ messages }) => {
-	return (
-		<svg className='w-full h-full'>
-			<mask id='mask-id'>
-				<rect width='100%' height='100%' fill='white' />
-
-				{messages.map((message, key) => {
-					if (message.position.x < 0 || message.position.y < 0) {
-						return;
-					}
-
-					const offsetPx = 20;
-					const offsetY = offsetPx / window.innerHeight;
-
-					const opacity = message.opacity;
-					const x = Math.floor(message.position.x * 100).toString() + "%";
-					const y =
-						Math.floor((message.position.y + offsetY) * 100).toString() + "%";
-					const fill = Math.floor((1 - opacity) * 255)
-						.toString(16)
-						.padStart(2, "0");
-
-					return (
-						<text
-							key={key}
-							x={x}
-							y={y}
-							textAnchor='start'
-							fill={"#" + fill + fill + fill}
-							fontSize='48'
-							fontWeight='bold'
-							fontFamily='"M PLUS Rounded 1c", sans-serif'
-						>
-							{message.content}
-						</text>
-					);
-				})}
-			</mask>
-		</svg>
-	);
-};

@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ame:ato
 
-## Getting Started
+## プロジェクト構造 (Project Structure)
+このプロジェクトは、フロントエンドとバックエンドのモノレポ構成になっています。
 
-First, run the development server:
+- `ameato/ameato`: フロントエンド (Next.js)
+- `ameato/ameato/backend`: バックエンド (Go)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## フロントエンド (Frontend)
+Next.js (App Router) を使用しています。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 特徴的な実装 (Key Features)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+#### Optimistic UI & Polling
+通信量を最小限に抑え、ユーザーの体感速度を向上させるため、以下の「Optimistic UI (楽観的UI)」方式を採用しています。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  **即時反映**: メッセージ送信時 (`POST`)、サーバーからのレスポンスを待たずに、ローカルのStateを即座に更新して画面にメッセージを表示します。これにより、ユーザーは待ち時間なく操作を継続できます。
+2.  **バックグラウンド同期**: 送信処理はバックグラウンドで行われます。成功すればそのまま、失敗した場合（オフラインなど）は再送キュー (`unSyncedMessages`) に保存され、オンライン復帰時に自動的に再送されます。
+3.  **ポーリング**: 他のユーザーが投稿したメッセージの取得は、定期的なポーリング (`useMessages` hook) によって行われます。送信直後に `GET` リクエストを行わないことで、不要な通信を削減しています。
 
-## Learn More
+#### Hooks
+ロジックは再利用可能なHooksに切り出されています。
 
-To learn more about Next.js, take a look at the following resources:
+- **`useCreateMessage`**: メッセージの送信ロジックを担当します。
+- **`useMessages`**: メッセージの取得（ポーリング）ロジックを担当します。
+- **`useKeyShortcuts`**: キーボードショートカットのイベントハンドリングを管理します。
+- **`useAutoClose`**: ダイアログなどの自動クローズタイマーを管理します。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## バックエンド (Backend)
+Go言語で実装されており、Clean Architectureを意識したレイヤー構造になっています。
+DI (Dependency Injection) には `google/wire` を使用しています。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### アーキテクチャ (Architecture)
+リクエストは以下の順に処理されます。
 
-## Deploy on Vercel
+**Flow:**
+`Router` -> `Handler` -> `Controller` -> `Repository` -> `DB`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 各層の役割 (Layers)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Router (`router`)**: 
+  - ルーティング定義 (`gin`) を行います。
+  - HTTPリクエストを受け取り、適切なHandlerに振り分けます。
+  - Middlewareの設定もここで行います。
+
+- **Handler (`handler`)**: 
+  - HTTPリクエストのハンドリングを行います。
+  - リクエストパラメータのバインドやバリデーション、レスポンスの生成（JSON化など）を担当します。
+  - ビジネスロジックを実行するために `Controller` を呼び出します。
+
+- **Controller (`controller`)**: 
+  - アプリケーション固有のビジネスロジックを実装します。
+  - データの加工や判定などを行い、データアクセスのために `Repository` を呼び出します。
+
+- **Repository (`repository`)**: 
+  - データベース (`DB`) へのアクセスを担当します。
+  - 具体的なSQLの実行やデータの取得・保存を行います。
+
+### API Interfaces
+
+#### `/messages`
+- **GET**: メッセージ一覧を取得します。
+  - Out: `message[]` (200)
+
+#### `/messages` (POST)
+- **POST**: 新しいメッセージを作成します。
+  - In: `message`
+  - Out: `nil` (201 Created)

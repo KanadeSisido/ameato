@@ -2,10 +2,10 @@
 
 ## プロジェクト構造 (Project Structure)
 
-このプロジェクトは、フロントエンドとバックエンドのモノレポ構成になっています。
+このプロジェクトは、ameato のフロントエンドです。
 
 - `.`: フロントエンド (Next.js)
-- `./backend`: バックエンド (Go)
+- バックエンド(Go)：別リポジトリ [KanadeSisido/ameato-backend](https://github.com/KanadeSisido/ameato-backend)
 
 ## フロントエンド (Frontend)
 

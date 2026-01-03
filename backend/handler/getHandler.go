@@ -20,6 +20,13 @@ func NewGetHandler(getController controller.GetControllerInterface) *GetHandler 
 	}
 }
 
+// @summary 表示可能なメッセージを取得する
+// @description 表示可能なメッセージを取得します。
+// @tags messages
+// @produce json
+// @Success 200 {object} model.MessagesResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /api/messages [get]
 func (h *GetHandler) GetHandler(ctx *gin.Context) {
 
 	context := ctx.Request.Context()

@@ -21,6 +21,16 @@ type PostHandler struct {
 	}
 }
 
+// @summary メッセージを投稿する
+// @description メッセージを投稿します。
+// @tags messages
+// @accept json
+// @produce json
+// @param message body model.CreateMessage true "Message to create"
+// @Success 200 {object} model.CreatedResponse
+// @Failure 400 {object} model.ErrorResponse
+// @Failure 500 {object} model.ErrorResponse
+// @Router /api/messages [post]
 func (h *PostHandler) PostHandler(ctx *gin.Context) {
 
 	// ginから分離する
@@ -43,7 +53,7 @@ func (h *PostHandler) PostHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, gin.H{
+	ctx.JSON(201, gin.H{
 		"status": "Message posted successfully",
 	})
 }

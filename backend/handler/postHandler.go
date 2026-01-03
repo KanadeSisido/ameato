@@ -12,12 +12,12 @@ type PostHandlerInterface interface {
 }
 
 type PostHandler struct {
-	postController controller.PostControllerInterface
+	createMessageController controller.CreateMessageControllerInterface
 }
 
-	func NewPostHandler(postController controller.PostControllerInterface) *PostHandler {
+	func NewPostHandler(createMessageController controller.CreateMessageControllerInterface) *PostHandler {
 	return &PostHandler{
-		postController: postController,
+		createMessageController: createMessageController,
 	}
 }
 
@@ -44,7 +44,7 @@ func (h *PostHandler) PostHandler(ctx *gin.Context) {
 		return
 	}
 
-	err := h.postController.PostMessages(context, requestBody)
+	err := h.createMessageController.CreateMessage(context, requestBody)
 	
 	if err != nil {
 		ctx.JSON(500, gin.H{

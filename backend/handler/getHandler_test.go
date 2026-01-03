@@ -29,7 +29,7 @@ func TestGetHandler(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	getController := mocks.NewMockGetControllerInterface(ctrl)
+	getController := mocks.NewMockGetMessageControllerInterface(ctrl)
 	getHandler := handler.NewGetHandler(getController)
 
 	cases := []GetHandlerTestCase{

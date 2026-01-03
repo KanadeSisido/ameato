@@ -28,7 +28,7 @@ func TestPostHandler(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	postController := mocks.NewMockPostControllerInterface(ctrl)
+	postController := mocks.NewMockCreateMessageControllerInterface(ctrl)
 	postHandler := handler.NewPostHandler(postController)
 	binding.EnableDecoderDisallowUnknownFields = true
 
@@ -114,7 +114,7 @@ func TestPostHandler(t *testing.T) {
 			c.Request.Header.Set("Content-Type", "application/json")
 	
 			if tc.expectCode != 400 {
-				postController.EXPECT().PostMessages(gomock.Any(), gomock.Any()).Return(tc.mockCtl)
+				postController.EXPECT().CreateMessage(gomock.Any(), gomock.Any()).Return(tc.mockCtl)
 			}
 
 			postHandler.PostHandler(c)

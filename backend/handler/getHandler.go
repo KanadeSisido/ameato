@@ -11,12 +11,12 @@ type GetHandlerInterface interface {
 }
 
 type GetHandler struct {
-	getController controller.GetControllerInterface
+	getMessageController controller.GetMessageControllerInterface
 }
 
-func NewGetHandler(getController controller.GetControllerInterface) *GetHandler {
+func NewGetHandler(getMessageController controller.GetMessageControllerInterface) *GetHandler {
 	return &GetHandler{
-		getController: getController,
+		getMessageController: getMessageController,
 	}
 }
 
@@ -30,7 +30,7 @@ func NewGetHandler(getController controller.GetControllerInterface) *GetHandler 
 func (h *GetHandler) GetHandler(ctx *gin.Context) {
 
 	context := ctx.Request.Context()
-	messages, err := h.getController.GetMessages(context)
+	messages, err := h.getMessageController.GetMessages(context)
 
 	if err != nil {
 		ctx.JSON(500, gin.H{

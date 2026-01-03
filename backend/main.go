@@ -6,6 +6,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// @title ame:ato API
+// @version 1.0
+// @description This is the API documentation for the ame:ato application.
 func main() {
 
 	err := godotenv.Load()

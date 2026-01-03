@@ -4,8 +4,8 @@
 
 このプロジェクトは、フロントエンドとバックエンドのモノレポ構成になっています。
 
-- `ameato/ameato`: フロントエンド (Next.js)
-- `ameato/ameato/backend`: バックエンド (Go)
+- `.`: フロントエンド (Next.js)
+- `./backend`: バックエンド (Go)
 
 ## フロントエンド (Frontend)
 

@@ -11,7 +11,7 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-func TestPostController(t *testing.T) {
+func TestCreateMessageController(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -145,9 +145,9 @@ func TestPostController(t *testing.T) {
 				repo.EXPECT().CreateMessage(gomock.Any(), tc.in).Return(nil)
 			}
 
-			createController := controller.NewPostController(repo)
+			createController := controller.NewCreateMessageController(repo)
 
-			err := createController.PostMessages(context.Background(), tc.in)
+			err := createController.CreateMessage(context.Background(), tc.in)
 
 			if tc.expErr {
 				if err.Error() != tc.ret.Error() {

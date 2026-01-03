@@ -8,22 +8,22 @@ import (
 	"unicode/utf8"
 )
 
-type PostControllerInterface interface {
-	PostMessages(ctx context.Context, message model.CreateMessage) error
+type CreateMessageControllerInterface interface {
+	CreateMessage(ctx context.Context, message model.CreateMessage) error
 }
 
-type PostController struct {
+type CreateMessageController struct {
 	createMessageRepository repository.CreateMessageRepositoryInterface
 }
 
-func NewPostController(createMessageRepository repository.CreateMessageRepositoryInterface) *PostController {
-	return &PostController{
+func NewCreateMessageController(createMessageRepository repository.CreateMessageRepositoryInterface) *CreateMessageController {
+	return &CreateMessageController{
 		createMessageRepository: createMessageRepository,
 	}
 }
 
 
-func (c *PostController) PostMessages(ctx context.Context, message model.CreateMessage) error {
+func (c *CreateMessageController) CreateMessage(ctx context.Context, message model.CreateMessage) error {
 
 	x := message.Position.X
 	y := message.Position.Y

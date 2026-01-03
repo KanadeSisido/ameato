@@ -20,11 +20,11 @@ import (
 func InitializeRouter() *gin.Engine {
 	gormDB := db.InitDB()
 	getMessageRepository := repository.NewGetMessageRepository(gormDB)
-	getController := controller.NewGetController(getMessageRepository)
-	getHandler := handler.NewGetHandler(getController)
+	getMessageController := controller.NewGetMessageController(getMessageRepository)
+	getHandler := handler.NewGetHandler(getMessageController)
 	createMessageRepository := repository.NewCreateMessageRepository(gormDB)
-	postController := controller.NewPostController(createMessageRepository)
-	postHandler := handler.NewPostHandler(postController)
+	createMessageController := controller.NewCreateMessageController(createMessageRepository)
+	postHandler := handler.NewPostHandler(createMessageController)
 	engine := router.NewRouter(getHandler, postHandler)
 	return engine
 }

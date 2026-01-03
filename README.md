@@ -98,18 +98,22 @@ API ドキュメントは Swagger で自動生成されています。
 
 1. リポジトリをクローンします。
    ```bash
-   git clone https://github.com/KanadeSisido/ame-ato.git
+   mkdir ameato && cd ameato
+   git clone https://github.com/KanadeSisido/ame-ato.git ameato
+   git clone https://github.com/KanadeSisido/ameato-backend.git backend
    ```
 1. 依存関係をインストールします。
    ```bash
+   cd ameato
    pnpm install
    ```
 1. バックエンドの環境変数を設定します。
    ```bash
+   cd ..
    cp backend/.env.example backend/.env
-   cp ./.env.example ./.env
+   cp ameato/.env.example ameato/.env
    ```
-   必ず、`backend/.env` と `./.env` の内容を適切に変更してください。
+   必ず、`backend/.env` と `ameato/.env` の内容を適切に変更してください。
 1. 開発用データベースを起動します（Docker 推奨）。
    ```bash
    cd backend
@@ -117,7 +121,7 @@ API ドキュメントは Swagger で自動生成されています。
    ```
 1. フロントエンドとバックエンドの開発サーバーを起動します。
    ```bash
-   cd ../
+   cd ../ameato
    pnpm dev
    ```
 1. ブラウザで `http://localhost:3000` にアクセスします。

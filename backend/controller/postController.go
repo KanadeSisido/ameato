@@ -5,6 +5,7 @@ import (
 	"ameato/repository"
 	"context"
 	"errors"
+	"unicode/utf8"
 )
 
 type PostControllerInterface interface {
@@ -27,7 +28,7 @@ func (c *PostController) PostMessages(ctx context.Context, message model.CreateM
 	x := message.Position.X
 	y := message.Position.Y
 
-	if len(message.Content) == 0 || len(message.Content) > 30 {
+	if len(message.Content) == 0 || utf8.RuneCountInString(message.Content) > 30 {
 		return errors.New("invalid Message Length")
 	}
 

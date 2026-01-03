@@ -25,7 +25,7 @@ func TestPostController(t *testing.T) {
 		expErr bool
 	}{
 		{
-			name: "Create Successfully",
+			name: "Create Successfully - 1",
 			in: model.CreateMessage{
 				Content: "Hello",
 				Position: model.Position{
@@ -36,6 +36,19 @@ func TestPostController(t *testing.T) {
 			ret: nil,
 			expErr: false,
 		},
+		{
+			name: "Create Successfully - 2",
+			in: model.CreateMessage{
+				Content: "こんにちはこんにちはこんにちはこんにちはこんにちは",
+				Position: model.Position{
+					X: 0.5,
+					Y: 0.5,
+				},
+			},
+			ret: nil,
+			expErr: false,
+		},
+		
 		{
 			name: "Invalid Message Length - Empty",
 			in: model.CreateMessage{

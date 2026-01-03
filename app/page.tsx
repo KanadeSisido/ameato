@@ -3,7 +3,7 @@ import { Transition } from "@headlessui/react";
 import React from "react";
 import { motion } from "motion/react";
 import { position, messages, createMessage } from "./types/type";
-import { useCreateMessage, useMessages } from "./hooks/useMessage";
+import { CreateMessage, useMessages } from "./hooks/useMessage";
 import { JosefinSans, MPLUSRounded1c } from "./fonts/font";
 import Link from "next/link";
 import { useKeyShortcuts } from "./hooks/useKeyShortcuts";
@@ -37,7 +37,7 @@ export default function Home() {
 	);
 
 	// メッセージ取得
-	let { messages, isLoading, isError } = useMessages({
+	const { messages, isLoading, isError } = useMessages({
 		onSuccess: () => setAdditionalMessages([]),
 	});
 
@@ -67,7 +67,7 @@ export default function Home() {
 					content: msg.content,
 				};
 
-				const status = await useCreateMessage().createMessage(createMsg);
+				const status = await CreateMessage(createMsg);
 
 				if (status !== 201) {
 					setDialogMessage("Failed to sync messages");
@@ -123,7 +123,6 @@ export default function Home() {
 	};
 
 	const isDisabled = inputText.length === 0 || inputText.length > 30;
-	const submitMessage = useCreateMessage();
 
 	const handleSubmit = async () => {
 		// 条件に合致しない場合は送信しない
@@ -152,7 +151,7 @@ export default function Home() {
 		};
 
 		// 送信
-		const status = await submitMessage.createMessage(newMessage);
+		const status = await CreateMessage(newMessage);
 		setIsOpen(false);
 		setInputText("");
 

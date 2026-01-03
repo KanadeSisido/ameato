@@ -37,23 +37,19 @@ export const useMessages = ({
 	};
 };
 
-export const useCreateMessage = () => {
-	const createMessage = async (content: createMessage) => {
-		let response;
-		try {
-			response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/api/messages`,
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(content),
-				}
-			);
-		} catch (error) {
-			return 400;
-		} finally {
-			return response ? response.status : 400;
-		}
-	};
-	return { createMessage };
+export const CreateMessage = async (content: createMessage) => {
+	let response;
+	try {
+		response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/messages`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(content),
+		});
+	} catch (_error) {
+		return 400;
+	} finally {
+		return response ? response.status : 400;
+	}
+
+	return response.status;
 };

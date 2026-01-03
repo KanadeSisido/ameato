@@ -73,7 +73,7 @@ func TestGetMessages(t *testing.T) {
 			
 			repo.EXPECT().GetMessages(gomock.Any()).Return(testMessages, tc.err)
 
-			GetController := controller.NewGetController(repo)
+			GetController := controller.NewGetMessageController(repo)
 			messages, err := GetController.GetMessages(context.Background())
 
 			// error check

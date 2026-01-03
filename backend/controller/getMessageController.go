@@ -8,21 +8,21 @@ import (
 	"time"
 )
 
-type GetControllerInterface interface {
+type GetMessageControllerInterface interface {
 	GetMessages(ctx context.Context) ([]model.MessageResponse, error)
 }
 
-type GetController struct {
+type GetMessageController struct {
 	getMessageRepository repository.GetMessageRepositoryInterface
 }
 
-func NewGetController(_getMessageRepository repository.GetMessageRepositoryInterface) *GetController {
-	return &GetController{
+func NewGetMessageController(_getMessageRepository repository.GetMessageRepositoryInterface) *GetMessageController {
+	return &GetMessageController{
 		getMessageRepository: _getMessageRepository,
 	}
 }
 
-func (c *GetController) GetMessages(ctx context.Context) ([]model.MessageResponse, error){
+func (c *GetMessageController) GetMessages(ctx context.Context) ([]model.MessageResponse, error){
 	messages, err := c.getMessageRepository.GetMessages(ctx);
 
 	if err != nil {

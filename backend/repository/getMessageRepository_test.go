@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func TestGetMessage(t *testing.T) {
+func TestGetMessageRepository(t *testing.T) {
 	db := db.InitTestDB(t)
 
 	cases := []struct {

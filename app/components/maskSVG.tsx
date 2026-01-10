@@ -1,15 +1,15 @@
-import { messages } from "../types/type";
+import { message, messages } from "../types/type";
 
 // SVGマスクコンポーネント
 export const MaskSVG: React.FC<{
-	messages: messages["messages"];
+	messages: messages;
 }> = ({ messages }) => {
 	return (
 		<svg className='w-full h-full'>
 			<mask id='mask-id'>
 				<rect width='100%' height='100%' fill='white' />
 
-				{messages.map((message, key) => {
+				{messages.map((message: message, key: number) => {
 					if (message.position.x < 0 || message.position.y < 0) {
 						return;
 					}

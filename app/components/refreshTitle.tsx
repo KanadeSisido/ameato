@@ -1,15 +1,17 @@
 import { Transition } from "@headlessui/react";
 import Image from "next/image";
-import { useState } from "react";
+import React, { useState } from "react";
 import { mutate } from "swr/_internal";
 import { JosefinSans } from "../fonts/font";
 import { motion } from "motion/react";
+import { NetWorkContext } from "../hooks/NetworkContext";
 
 // ローディング表示コンポーネント + オフライン表示
 export const RefreshTitle: React.FC<{
 	isLoading: boolean;
 	offline: boolean;
-}> = ({ isLoading, offline }) => {
+}> = ({ isLoading }) => {
+	const { isOnline } = React.useContext(NetWorkContext);
 	const [guard, setGuard] = useState(false);
 
 	const handleClick = () => {
@@ -33,10 +35,10 @@ export const RefreshTitle: React.FC<{
 					className='cursor-pointer select-none hover:opacity-70'
 				/>
 
-				{offline && (
-					<p className={"text-blue-200 mt-2 " + JosefinSans.className}>
+				{!isOnline && (
+					<div className={"text-blue-200 mt-2 " + JosefinSans.className}>
 						OFFLINE
-					</p>
+					</div>
 				)}
 			</div>
 			<Transition
@@ -47,7 +49,7 @@ export const RefreshTitle: React.FC<{
 				leaveFrom='opacity-100'
 				leaveTo='opacity-0'
 				afterLeave={() => {}}
-				show={isLoading || guard}
+				show={(isLoading && isOnline) || guard}
 			>
 				<motion.p
 					initial={{ y: 50, scale: 0.4 }}

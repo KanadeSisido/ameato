@@ -1,17 +1,27 @@
 import { useEffect } from "react";
 
 export const useKeyShortcuts = (
-	isOpen: boolean,
-	onClose: () => void,
-	onSubmit: () => void
+	keymap: {
+		[key: string]: (e: KeyboardEvent) => void;
+	},
+	requireControll?: {
+		[key: string]: (e: KeyboardEvent) => void;
+	}
 ) => {
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === "Escape") {
-				onClose();
-			} else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-				if (isOpen) {
-					onSubmit();
+			const action = keymap[e.key];
+
+			if (action && !e.ctrlKey) {
+				e.preventDefault();
+				action(e);
+			}
+			if (e.ctrlKey) {
+				const ctrlAction = requireControll?.[e.key];
+
+				if (ctrlAction) {
+					e.preventDefault();
+					ctrlAction(e);
 				}
 			}
 		};
@@ -21,5 +31,5 @@ export const useKeyShortcuts = (
 		return () => {
 			document.removeEventListener("keydown", handleKeyDown);
 		};
-	}, [isOpen, onClose, onSubmit]);
+	}, [keymap, requireControll]);
 };

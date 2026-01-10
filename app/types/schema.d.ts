@@ -63,8 +63,8 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description OK */
-                200: {
+                /** @description Created */
+                201: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -107,7 +107,7 @@ export interface components {
             position: components["schemas"]["model.Position"];
         };
         "model.CreatedResponse": {
-            status?: string;
+            message: components["schemas"]["model.MessageResponse"];
         };
         "model.ErrorResponse": {
             error?: string;

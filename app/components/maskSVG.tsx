@@ -12,26 +12,17 @@ export const MaskSVG: React.FC<{
 		setIsMounted(true);
 
 		const updateDimensions = () => {
-			// スクロール範囲全体をカバー
 			setDimensions({
-				width: Math.max(
-					document.documentElement.scrollWidth,
-					window.innerWidth,
-				),
-				height: Math.max(
-					document.documentElement.scrollHeight,
-					window.innerHeight,
-				),
+				width: window.innerWidth,
+				height: window.innerHeight,
 			});
 		};
 
 		updateDimensions();
 		window.addEventListener("resize", updateDimensions);
-		window.addEventListener("scroll", updateDimensions);
 
 		return () => {
 			window.removeEventListener("resize", updateDimensions);
-			window.removeEventListener("scroll", updateDimensions);
 		};
 	}, []);
 

@@ -245,11 +245,9 @@ export default function Screen() {
 			</Suspense>
 			<div
 				className='absolute w-full h-full backdrop-blur-sm bg-white/30'
-				style={{
+				style={{ 
 					WebkitMaskImage: "url(#mask-id)",
-					maskImage: "url(#mask-id)",
-					transform: "translateZ(0)",
-					WebkitTransform: "translateZ(0)",
+					maskImage: "url(#mask-id)" 
 				}}
 				onClick={handleClick}
 			></div>

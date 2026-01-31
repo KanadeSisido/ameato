@@ -1,12 +1,22 @@
+"use client";
+import { useEffect, useState } from "react";
 import { message, messages } from "../types/type";
 
 // SVGマスクコンポーネント
 export const MaskSVG: React.FC<{
 	messages: messages;
 }> = ({ messages }) => {
+	const [isMounted, setIsMounted] = useState(false);
+	useEffect(() => setIsMounted(true), []);
+
+	if (!isMounted) return null;
+
 	return (
-		<svg className='w-full h-full'>
-			<mask id='mask-id'>
+		<svg 
+			className='absolute w-full h-full'
+			style={{ pointerEvents: 'none' }}
+		>
+			<mask id='mask-id' maskUnits='userSpaceOnUse' x='0' y='0' width='100%' height='100%'>
 				<rect width='100%' height='100%' fill='white' />
 
 				{messages.map((message: message, key: number) => {

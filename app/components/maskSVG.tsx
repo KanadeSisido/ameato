@@ -13,16 +13,24 @@ export const MaskSVG: React.FC<{
 
 		const updateDimensions = () => {
 			setDimensions({
-				width: window.innerWidth,
-				height: window.innerHeight,
+				width: Math.max(
+					document.documentElement.scrollWidth,
+					window.innerWidth,
+				),
+				height: Math.max(
+					document.documentElement.scrollHeight,
+					window.innerHeight,
+				),
 			});
 		};
 
 		updateDimensions();
 		window.addEventListener("resize", updateDimensions);
+		window.addEventListener("scroll", updateDimensions);
 
 		return () => {
 			window.removeEventListener("resize", updateDimensions);
+			window.removeEventListener("scroll", updateDimensions);
 		};
 	}, []);
 

@@ -2,55 +2,85 @@
 import { useEffect, useState } from "react";
 import { message, messages } from "../types/type";
 
-// SVGマスクコンポーネント
 export const MaskSVG: React.FC<{
 	messages: messages;
 }> = ({ messages }) => {
 	const [isMounted, setIsMounted] = useState(false);
-	useEffect(() => setIsMounted(true), []);
+	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-	if (!isMounted) return null;
+	useEffect(() => {
+		setIsMounted(true);
+		// 初期サイズ設定
+		setDimensions({
+			width: window.innerWidth,
+			height: window.innerHeight,
+		});
+
+		// リサイズ時の更新
+		const handleResize = () => {
+			setDimensions({
+				width: window.innerWidth,
+				height: window.innerHeight,
+			});
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
+	if (!isMounted || dimensions.width === 0) return null;
 
 	return (
-		<svg 
-			className='absolute w-full h-full'
-			style={{ pointerEvents: 'none' }}
+		<svg
+			className='absolute top-0 left-0 w-full h-full'
+			width={dimensions.width}
+			height={dimensions.height}
+			viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
+			style={{ pointerEvents: "none" }}
+			xmlns='http://www.w3.org/2000/svg'
 		>
-			<mask id='mask-id' maskUnits='userSpaceOnUse' x='0' y='0' width='100%' height='100%'>
-				<rect width='100%' height='100%' fill='white' />
+			<defs>
+				<mask
+					id='mask-id'
+					maskUnits='userSpaceOnUse'
+					x='0'
+					y='0'
+					width={dimensions.width}
+					height={dimensions.height}
+				>
+					<rect width='100%' height='100%' fill='white' />
 
-				{messages.map((message: message, key: number) => {
-					if (message.position.x < 0 || message.position.y < 0) {
-						return;
-					}
+					{messages.map((message: message, key: number) => {
+						if (message.position.x < 0 || message.position.y < 0) {
+							return null;
+						}
 
-					const offsetPx = 20;
-					const offsetY = offsetPx / window.innerHeight;
+						const offsetPx = 20;
+						const offsetY = offsetPx / dimensions.height;
 
-					const opacity = message.opacity;
-					const x = Math.floor(message.position.x * 100).toString() + "%";
-					const y =
-						Math.floor((message.position.y + offsetY) * 100).toString() + "%";
-					const fill = Math.floor((1 - opacity) * 255)
-						.toString(16)
-						.padStart(2, "0");
+						const opacity = message.opacity;
+						const x = message.position.x * dimensions.width;
+						const y = (message.position.y + offsetY) * dimensions.height;
+						const grayValue = Math.floor((1 - opacity) * 255);
+						const fill = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
 
-					return (
-						<text
-							key={key}
-							x={x}
-							y={y}
-							textAnchor='start'
-							fill={"#" + fill + fill + fill}
-							fontSize='48'
-							fontWeight='bold'
-							fontFamily='"M PLUS Rounded 1c", sans-serif'
-						>
-							{message.content}
-						</text>
-					);
-				})}
-			</mask>
+						return (
+							<text
+								key={key}
+								x={x}
+								y={y}
+								textAnchor='start'
+								fill={fill}
+								fontSize='48'
+								fontWeight='bold'
+								fontFamily='"M PLUS Rounded 1c", sans-serif'
+							>
+								{message.content}
+							</text>
+						);
+					})}
+				</mask>
+			</defs>
 		</svg>
 	);
 };

@@ -1,6 +1,9 @@
 name: Deploy Next.js Application（Static）
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - master
 
 concurrency:
   group: "deploy-nextapp"

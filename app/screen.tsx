@@ -63,7 +63,7 @@ export default function Screen() {
 					setRequireCtrlEnter(false);
 				}
 			},
-		}
+		},
 	);
 
 	// メッセージ取得
@@ -141,7 +141,7 @@ export default function Screen() {
 
 			setClickPos({ x: x, y: y });
 		},
-		[]
+		[],
 	);
 
 	const isDisabled = inputText.length === 0 || inputText.length > 30;
@@ -226,7 +226,7 @@ export default function Screen() {
 			}
 			setInputText(event.target.value);
 		},
-		[isHalfWidthText]
+		[isHalfWidthText],
 	);
 
 	return (
@@ -245,7 +245,12 @@ export default function Screen() {
 			</Suspense>
 			<div
 				className='absolute w-full h-full backdrop-blur-sm bg-white/30'
-				style={{ maskImage: "url(#mask-id)" }}
+				style={{
+					WebkitMaskImage: "url(#mask-id)",
+					maskImage: "url(#mask-id)",
+					transform: "translateZ(0)",
+					WebkitTransform: "translateZ(0)",
+				}}
 				onClick={handleClick}
 			></div>
 

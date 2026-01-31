@@ -5,7 +5,7 @@
 このプロジェクトは、ameato のフロントエンドです。
 
 - `.`: フロントエンド (Next.js)
-- バックエンド(Go)：別リポジトリ [KanadeSisido/ameato-backend](https://github.com/KanadeSisido/ameato-backend)
+- バックエンド(Go)：別リポジトリ [KanadeSisido/ameato-backend-pub](https://github.com/KanadeSisido/ameato-backend-pub)
 
 ## フロントエンド (Frontend)
 
@@ -63,7 +63,7 @@ API ドキュメントは Swagger で自動生成されています。
    ```bash
    mkdir ameato && cd ameato
    git clone https://github.com/KanadeSisido/ameato.git ameato
-   git clone https://github.com/KanadeSisido/ameato-backend.git backend
+   git clone https://github.com/KanadeSisido/ameato-backend-pub.git backend
    ```
 1. 依存関係をインストールします。
    ```bash

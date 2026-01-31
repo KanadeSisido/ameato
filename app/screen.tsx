@@ -101,7 +101,7 @@ export default function Screen() {
 
 	// クリックした位置に入力フォームを表示
 	const handleClick = React.useCallback(
-		(event: React.MouseEvent<HTMLDivElement>) => {
+		(event: React.MouseEvent<SVGRectElement>) => {
 			setIsInputModalOpen(true);
 			setOpenTips(false);
 
@@ -243,16 +243,24 @@ export default function Screen() {
 					className='absolute w-full h-full object-cover'
 				/>
 			</Suspense>
-			<div
-				className='absolute w-full h-full backdrop-blur-sm bg-white/30'
-				style={{
-					WebkitMaskImage: "url(#mask-id)",
-					maskImage: "url(#mask-id)",
-					WebkitMaskSize: "100% 100%",
-					maskSize: "100% 100%",
-				}}
-				onClick={handleClick}
-			></div>
+
+			<svg className='absolute w-full h-full' style={{ pointerEvents: "none" }}>
+				<defs>
+					<filter id='blur-filter'>
+						<feGaussianBlur in='SourceGraphic' stdDeviation='8' />
+					</filter>
+				</defs>
+				<rect
+					width='100%'
+					height='100%'
+					fill='white'
+					opacity='0.3'
+					filter='url(#blur-filter)'
+					mask='url(#mask-id)'
+					style={{ pointerEvents: "all", cursor: "pointer" }}
+					onClick={handleClick}
+				/>
+			</svg>
 
 			<MaskSVG messages={[...messages, ...unSyncedMessages]} />
 

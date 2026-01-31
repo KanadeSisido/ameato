@@ -10,45 +10,62 @@ export const MaskSVG: React.FC<{
 
 	useEffect(() => {
 		setIsMounted(true);
-		// 初期サイズ設定
-		setDimensions({
-			width: window.innerWidth,
-			height: window.innerHeight,
-		});
 
-		// リサイズ時の更新
-		const handleResize = () => {
+		const updateDimensions = () => {
+			// スクロール範囲全体をカバー
 			setDimensions({
-				width: window.innerWidth,
-				height: window.innerHeight,
+				width: Math.max(
+					document.documentElement.scrollWidth,
+					window.innerWidth,
+				),
+				height: Math.max(
+					document.documentElement.scrollHeight,
+					window.innerHeight,
+				),
 			});
 		};
 
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
+		updateDimensions();
+		window.addEventListener("resize", updateDimensions);
+		window.addEventListener("scroll", updateDimensions);
+
+		return () => {
+			window.removeEventListener("resize", updateDimensions);
+			window.removeEventListener("scroll", updateDimensions);
+		};
 	}, []);
 
 	if (!isMounted || dimensions.width === 0) return null;
 
 	return (
 		<svg
-			className='absolute top-0 left-0 w-full h-full'
+			className='absolute top-0 left-0'
 			width={dimensions.width}
 			height={dimensions.height}
 			viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
-			style={{ pointerEvents: "none" }}
+			style={{
+				pointerEvents: "none",
+				position: "absolute",
+				top: 0,
+				left: 0,
+			}}
 			xmlns='http://www.w3.org/2000/svg'
 		>
 			<defs>
 				<mask
 					id='mask-id'
-					maskUnits='userSpaceOnUse'
 					x='0'
 					y='0'
 					width={dimensions.width}
 					height={dimensions.height}
 				>
-					<rect width='100%' height='100%' fill='white' />
+					<rect
+						x='0'
+						y='0'
+						width={dimensions.width}
+						height={dimensions.height}
+						fill='white'
+					/>
 
 					{messages.map((message: message, key: number) => {
 						if (message.position.x < 0 || message.position.y < 0) {

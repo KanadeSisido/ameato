@@ -23,8 +23,6 @@ jobs:
         run: pnpm install
       - name: Run lint
         run: pnpm lint
-      - name: Check env
-        run: echo "API URL is ${{ vars.NEXT_PUBLIC_API_URL }}"
       - name: build
         run: pnpm build
         env:
